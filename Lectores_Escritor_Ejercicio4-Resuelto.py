@@ -6,8 +6,10 @@ from rwlock import RWLock
 
 logging.basicConfig(format='%(asctime)s.%(msecs)03d [%(threadName)s] - %(message)s', datefmt='%H:%M:%S', level=logging.INFO)
 
+
 equipos = ["Boca", "River", "Racing", "Independiente", "San Lorenzo", "Huracán", "Gimnasia",
            "Estudiantes", "Velez", "Ferro", "Lanus", "Quilmes"]
+
 
 partido = ["",0,"",0]
 
@@ -65,6 +67,7 @@ def main():
 
     for t in hilos:
         t.join()
+
 
 if __name__ == "__main__":
     main()
