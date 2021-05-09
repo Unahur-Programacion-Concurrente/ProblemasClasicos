@@ -61,12 +61,16 @@ class listaFinita(list):
             return False
 
 
-
 class Productor(threading.Thread):
+    paises = [("España","Madrid"),("Francia","Paris"),("Italia","Roma"),("Inglaterra","Londres"),("Alemania","Berlin"),("Rusia","Moscu"),
+              ("Turquia","Istambul"),("China","Pekin"),("Japon","Tokio"),("Emiratos Arabes","Dubai"),("Argentina","Buenos Aires"),
+              ("Brasil","Brasilia"),("Colombia","Bogota"),("Uruguay","Montevideo")]
+
     def __init__(self, lista, lockLleno):
         super().__init__()
         self.lista = lista
         self.lockLleno = lockLleno
+
 
     def run(self):
         while True:
@@ -74,7 +78,7 @@ class Productor(threading.Thread):
             try:
                 while self.lista.full():
                     pass
-                self.lista.append(random.randint(0,100))
+                self.lista.append(self.paises[random.randint(0,len(self.paises)-1)])
                 logging.info(f'produjo el item: {self.lista[-1]}')
                 time.sleep(random.randint(1,5))
             finally:
@@ -87,6 +91,7 @@ class Consumidor(threading.Thread):
         self.lista = lista
         self.lockVacio = lockVacio
 
+
     def run(self):
         while True:
             self.lockVacio.acquire()
@@ -94,7 +99,7 @@ class Consumidor(threading.Thread):
                 while len(self.lista) == 0:
                     pass
                 elemento = self.lista.pop(0)
-                logging.info(f'consumio el item {elemento}')
+                logging.info(f'La capital de {elemento[0]} es {elemento[1]}')
                 time.sleep(random.randint(1,5))
             finally:
                 self.lockVacio.release()
@@ -114,7 +119,7 @@ def main():
         logging.info(f'Arrancando productor {productor.name}')
         productor.start()
 
-        logging.info(f'Arrancando consumidor {consumidor.name}')
+        logging.info(f'Arrancando productor {consumidor.name}')
         consumidor.start()
 
     for h in hilos:
