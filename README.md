@@ -61,7 +61,7 @@ El programa no debe mostrar inconsistencias ni errores debidos a condiciones de 
 
 # Lectores - Escritor
 
-## Ejercicio 3
+## Ejercicio 6
 
 ````
 rwlock.py
@@ -117,7 +117,7 @@ Métodos:
     
     
     
-## Ejercicio 4
+## Ejercicio 7
 
 
 1. Utilizando la clase RWLock escribir un programa que implemente la siguiente aplicación Lectores-Escritor:

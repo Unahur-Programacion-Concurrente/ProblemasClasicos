@@ -41,14 +41,29 @@ class listaFinita(list):
     def __init__(self, max_elementos):
             self.max_elementos = max_elementos
             super().__init__()
+            self.vacio = threading.Semaphore(max_elementos)
+            self.lleno = threading.Semaphore(0)
+            self.lock = threading.Lock()
+
 
     def pop(self, index):
-        assert len(self) != 0, "lista vacia"
-        return super().pop(index)
+        self.lleno.acquire()
+        self.lock.acquire()
+        try:
+            return super().pop(index)
+        finally:
+            self.lock.release()
+            self.vacio.release()
+
 
     def append(self, item):
-        assert len(self) < self.max_elementos,"lista llena"
-        super().append(item)
+        self.vacio.acquire()
+        self.lock.acquire()
+        try:
+            super().append(item)
+        finally:
+            self.lock.release()
+            self.lleno.release()
 
     def insert(self, index, item):
         assert index < self.max_elementos, "indice invalido"
@@ -61,65 +76,47 @@ class listaFinita(list):
             return False
 
 
-class Productor(threading.Thread):
-    paises = [("España","Madrid"),("Francia","Paris"),("Italia","Roma"),("Inglaterra","Londres"),("Alemania","Berlin"),("Rusia","Moscu"),
-              ("Turquia","Istambul"),("China","Pekin"),("Japon","Tokio"),("Emiratos Arabes","Dubai"),("Argentina","Buenos Aires"),
-              ("Brasil","Brasilia"),("Colombia","Bogota"),("Uruguay","Montevideo")]
 
-    def __init__(self, lista, lockLleno):
+class Productor(threading.Thread):
+    def __init__(self, lista):
         super().__init__()
         self.lista = lista
-        self.lockLleno = lockLleno
 
 
     def run(self):
         while True:
-            self.lockLleno.acquire()
-            try:
-                while self.lista.full():
-                    pass
-                self.lista.append(self.paises[random.randint(0,len(self.paises)-1)])
-                logging.info(f'produjo el item: {self.lista[-1]}')
-                time.sleep(random.randint(1,5))
-            finally:
-                self.lockLleno.release()
+            self.lista.append(random.randint(0,100))
+            logging.info(f'produjo el item: {self.lista[-1]}')
+            time.sleep(random.randint(1,5))
 
 
 class Consumidor(threading.Thread):
-    def __init__(self, lista, lockVacio):
+    def __init__(self, lista):
         super().__init__()
         self.lista = lista
-        self.lockVacio = lockVacio
-
 
     def run(self):
         while True:
-            self.lockVacio.acquire()
-            try:
-                while len(self.lista) == 0:
-                    pass
-                elemento = self.lista.pop(0)
-                logging.info(f'La capital de {elemento[0]} es {elemento[1]}')
-                time.sleep(random.randint(1,5))
-            finally:
-                self.lockVacio.release()
+            elemento = self.lista.pop(0)
+            logging.info(f'consumio el item {elemento}')
+            time.sleep(random.randint(1,5))
+
 
 def main():
     hilos = []
     lista = listaFinita(4)
-    lockLleno = threading.Lock()
-    lockVacio = threading.Lock()
+
 
     for i in range(4):
-        productor = Productor(lista, lockLleno)
-        consumidor = Consumidor(lista, lockVacio)
+        productor = Productor(lista)
+        consumidor = Consumidor(lista)
         hilos.append(productor)
         hilos.append(consumidor)
 
         logging.info(f'Arrancando productor {productor.name}')
         productor.start()
 
-        logging.info(f'Arrancando productor {consumidor.name}')
+        logging.info(f'Arrancando consumidor {consumidor.name}')
         consumidor.start()
 
     for h in hilos:
