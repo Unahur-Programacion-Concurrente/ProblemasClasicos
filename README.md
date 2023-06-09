@@ -22,12 +22,22 @@ Finalmente instancia una lista (listaFinita) de un tamaño especifico y dos conj
 
 3. **Utilizando Locks o RLocks solamente**, modificar los objetos Productor y Consumidor de modo que solucionen los erroes e inconsistencias.
 
-
-
-
 ## Ejercicio 2
 
-1. **Sin alterar la clase *listaFinita***, modificar el programa de modo que el productor inserte objetos tupla de strings **tomados al azar** de la siguiente lista. 
+**Utilizando Semáforos solamente**, implementar la solución al Ejercicio 1.
+
+## Ejercicio 3
+
+Modificar la clase listaFinita de modo que implemente una **"cola bloqueante"**, e implementar la solución al Ejercicio 1.
+
+## Ejercicio 4
+
+Implementar la "cola bloqueante" utilizando un objeto **queue** e implementar la solución al Ejercicio 1.
+
+
+## Ejercicio 5
+
+Utilizando cualquiera de las soluciones de **cola bloqueante**, modificar el programa de modo que el productor inserte objetos tupla de strings **tomados al azar** de la siguiente lista. 
 ```
 [("España","Madrid"), ("Francia","Paris"),("Italia","Roma"),("Inglaterra","Londres"),("Alemania","Berlin",("Rusia","Moscu"),
 ("Turquia","Istambul"),("China","Pekin"), ("Japon","Tokio"),("Emiratos Arabes","Dubai"),("Argentina","Buenos Aires"),
