@@ -1,4 +1,4 @@
-# Problemas Clasicos de Programación Concurrente 1
+# Problemas Clasicos de Programación Concurrente
 
 # Productor Consumidor
 
